@@ -40,8 +40,7 @@ export default function About() {
               pursue web development.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed mb-4">
-              Throughout my career, I've worked with startups and established companies, helping them build scalable,
-              performant applications. I believe in writing clean, maintainable code and continuously learning new
+              I believe in writing clean, maintainable code and continuously learning new
               technologies.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed">
