@@ -42,7 +42,7 @@ const projects = [
     tags: ["Node.js", "Express", "MongoDB", "Mongoose"],
     link: "",
     github: "",
-    image: "/images/svkm.png",
+    image: "/educonnect.jpeg",
   },
   {
     id: 2,
@@ -51,7 +51,7 @@ const projects = [
     tags: ["Microservices", "Node.js", "Prisma", "Supabase", "MongoDB", "TypeScript"],
     link: "",
     github: "https://github.com/your-username/SkillForge-Backend",
-    image: "/images/skillforge.png",
+    image: "/skillforge.png",
   },
   {
     id: 3,
@@ -60,7 +60,7 @@ const projects = [
     tags: ["Node.js", "Express", "MongoDB"],
     link: "",
     github: "https://github.com/your-username/GateHub",
-    image: "/images/gatehub.png",
+    image: "/mygate.png",
   },
   {
     id: 4,
@@ -69,7 +69,7 @@ const projects = [
     tags: ["Fastify", "Node.js", "Prisma", "WebSocket", "Socket.IO", "SQL"],
     link: "",
     github: "https://github.com/your-username/Social-Sync",
-    image: "/images/socialsync.png",
+    image: "/social-sync.png",
   },
   {
     id: 5,
@@ -78,7 +78,7 @@ const projects = [
     tags: ["React", "Node.js", "MongoDB", "Prisma", "Gemini AI"],
     link: "https://codeblooded-hackniche3.vercel.app/",
     github: "https://github.com/your-username/inventory-system",
-    image: "/images/inventory.png",
+    image: "/ims.png",
   },
   {
     id: 6,
@@ -87,7 +87,7 @@ const projects = [
     tags: ["React", "Node.js", "MongoDB", "Prisma", "Gemini AI"],
     link: "",
     github: "https://github.com/your-username/educare",
-    image: "/images/educare.png",
+    image: "/educare.png",
   },
   {
     id: 7,
@@ -96,7 +96,7 @@ const projects = [
     tags: ["React", "Node.js", "Cheerio", "Prisma"],
     link: "",
     github: "https://github.com/your-username/repo-reveal",
-    image: "/images/repo-reveal.png",
+    image: "/repo-reveal.png",
   },
   {
     id: 8,
@@ -105,7 +105,7 @@ const projects = [
     tags: ["React", "Node.js", "Supabase", "Prisma"],
     link: "",
     github: "https://github.com/your-username/Blogify",
-    image: "/images/blogify.png",
+    image: "/blogify.png",
   },
   {
     id: 9,
@@ -114,7 +114,7 @@ const projects = [
     tags: ["React", "Node.js", "Gitea", "Socket.IO", "Monaco"],
     link: "",
     github: "https://github.com/your-username/MindLink",
-    image: "/images/mindlink.png",
+    image: "/mindlink.png",
   }
 ];
 

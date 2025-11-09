@@ -40,8 +40,8 @@ export default function Leadership() {
     <section id="leadership" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">Leadership & Community</h2>
-          <p className="text-muted-foreground">Contributing to the tech community and helping others grow</p>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">Leadership and Extra-Curricular</h2>
+          <p className="text-muted-foreground">Contributing to the tech committees and helping others grow</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">

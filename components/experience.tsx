@@ -6,29 +6,30 @@ import { Card } from "@/components/ui/card"
 const experiences = [
   {
     id: 1,
-    title: "Senior Full-Stack Developer",
-    company: "Tech Company",
-    period: "2022 - Present",
+    title: "Web Development Intern",
+    company: "Express Rupya Capital Advisors",
+    period: "Jun 2024 – Jul 2024",
     description:
-      "Led development of scalable web applications serving 100k+ users. Architected microservices and improved system performance by 40%.",
+      "Built internal web tools using React.js and Express.js while working on-site in Mumbai.",
   },
   {
     id: 2,
-    title: "Full-Stack Developer",
-    company: "Startup Inc",
-    period: "2020 - 2022",
+    title: "Backend Developer Intern",
+    company: "Branding Catalyst Pvt. Ltd.",
+    period: "Aug 2024 – Oct 2024",
     description:
-      "Built and maintained customer-facing applications. Implemented CI/CD pipelines and mentored junior developers.",
+      "Developed scalable backend APIs with Express.js, implemented authentication, and contributed to production deployments (Remote).",
   },
   {
     id: 3,
-    title: "Junior Developer",
-    company: "Web Agency",
-    period: "2019 - 2020",
+    title: "Web Scraping Intern",
+    company: "Express Rupya Capital Advisors",
+    period: "Aug 2024 – April 2025",
     description:
-      "Developed responsive web applications. Collaborated with designers and learned best practices in modern web development.",
+      "Worked on automated data extraction pipelines using Selenium and BeautifulSoup (Hybrid).",
   },
-]
+];
+
 
 export default function Experience() {
   const [isVisible, setIsVisible] = useState(false)
