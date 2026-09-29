@@ -1,204 +1,154 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ExternalLink, GithubIcon } from "lucide-react"
+import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react"
+import { ArrowUpRight, Lock } from "lucide-react"
+import { projects } from "@/lib/data"
+import { cn } from "@/lib/utils"
+import { Reveal } from "./reveal"
+import { SectionHeading } from "./section-heading"
 
-// const projects = [
-//   {
-//     id: 1,
-//     title: "E-Commerce Platform",
-//     description: "A full-stack e-commerce solution with real-time inventory management",
-//     tags: ["React", "Node.js", "PostgreSQL", "Stripe"],
-//     link: "https://example.com/project1",
-//     github: "https://github.com/example/project1",
-//     image: "/ecommerce-platform.jpg",
-//   },
-//   {
-//     id: 2,
-//     title: "Project Management Tool",
-//     description: "Collaborative project management app with real-time updates",
-//     tags: ["Next.js", "WebSocket", "TypeScript", "Tailwind"],
-//     link: "https://example.com/project2",
-//     github: "https://github.com/example/project2",
-//     image: "/project-management-board.png",
-//   },
-//   {
-//     id: 3,
-//     title: "Analytics Dashboard",
-//     description: "Interactive analytics dashboard for business intelligence",
-//     tags: ["React", "D3.js", "AWS", "PostgreSQL"],
-//     link: "https://example.com/project3",
-//     github: "https://github.com/example/project3",
-//     image: "/analytics-dashboard.png",
-//   },
-// ]
-const projects = [
-  {
-    id: 1,
-    title: "SVKM Project",
-    description: "Live project for SVKM schools as backend lead.",
-    tags: ["Node.js", "Express", "MongoDB", "Mongoose"],
-    link: "",
-    github: "",
-    image: "/educonnect.jpeg",
-  },
-  {
-    id: 2,
-    title: "SkillForge",
-    description: "Microservices LMS with mentor-user architecture.",
-    tags: ["Microservices", "Node.js", "Prisma", "Supabase", "MongoDB", "TypeScript"],
-    link: "",
-    github: "https://github.com/your-username/SkillForge-Backend",
-    image: "/skillforge.png",
-  },
-  {
-    id: 3,
-    title: "GateHub",
-    description: "Internship project – MyGate clone for society management.",
-    tags: ["Node.js", "Express", "MongoDB"],
-    link: "",
-    github: "https://github.com/your-username/GateHub",
-    image: "/mygate.png",
-  },
-  {
-    id: 4,
-    title: "Social Sync",
-    description: "Backend contributor for a live video streaming platform.",
-    tags: ["Fastify", "Node.js", "Prisma", "WebSocket", "Socket.IO", "SQL"],
-    link: "",
-    github: "https://github.com/your-username/Social-Sync",
-    image: "/social-sync.png",
-  },
-  {
-    id: 5,
-    title: "Inventory Management System",
-    description: "Hackathon project with advanced inventory features.",
-    tags: ["React", "Node.js", "MongoDB", "Prisma", "Gemini AI"],
-    link: "https://codeblooded-hackniche3.vercel.app/",
-    github: "https://github.com/your-username/inventory-system",
-    image: "/ims.png",
-  },
-  {
-    id: 6,
-    title: "EduCare",
-    description: "Teacher-student platform with AI-based analysis.",
-    tags: ["React", "Node.js", "MongoDB", "Prisma", "Gemini AI"],
-    link: "",
-    github: "https://github.com/your-username/educare",
-    image: "/educare.png",
-  },
-  {
-    id: 7,
-    title: "Repo Reveal",
-    description: "GitHub repository scraper showing repo insights.",
-    tags: ["React", "Node.js", "Cheerio", "Prisma"],
-    link: "",
-    github: "https://github.com/your-username/repo-reveal",
-    image: "/repo-reveal.png",
-  },
-  {
-    id: 8,
-    title: "Blogify",
-    description: "Blog social media app with search & sentiment analysis.",
-    tags: ["React", "Node.js", "Supabase", "Prisma"],
-    link: "",
-    github: "https://github.com/your-username/Blogify",
-    image: "/blogify.png",
-  },
-  {
-    id: 9,
-    title: "MindLink",
-    description: "Real-time collaborative coding environment.",
-    tags: ["React", "Node.js", "Gitea", "Socket.IO", "Monaco"],
-    link: "",
-    github: "https://github.com/your-username/MindLink",
-    image: "/mindlink.png",
-  }
-];
+const linkClass =
+  "label inline-flex items-center gap-1.5 rounded-full border border-line-strong px-3.5 py-2 text-[10px] text-bone transition-colors duration-300 hover:border-signal hover:bg-signal hover:text-ink"
 
 export default function Projects() {
-  const [isVisible, setIsVisible] = useState(false)
+  const [active, setActive] = useState<number | null>(null)
+  const previewRef = useRef<HTMLDivElement>(null)
+  const motion = useRef({ x: 0, y: 0, tx: 0, ty: 0, frame: 0, hovering: false })
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-        }
-      },
-      { threshold: 0.1 },
-    )
-
-    const element = document.getElementById("projects")
-    if (element) observer.observe(element)
-    return () => observer.disconnect()
+  // Ease the floating preview toward the cursor, tilting with horizontal velocity.
+  const tick = useCallback(() => {
+    const m = motion.current
+    const dx = m.tx - m.x
+    m.x += dx * 0.15
+    m.y += (m.ty - m.y) * 0.15
+    const tilt = Math.max(-8, Math.min(8, dx * 0.06))
+    if (previewRef.current) {
+      previewRef.current.style.transform = `translate3d(${m.x}px, ${m.y}px, 0) translate(-50%, -50%) rotate(${tilt}deg)`
+    }
+    const settled = Math.abs(dx) < 0.2 && Math.abs(m.ty - m.y) < 0.2
+    m.frame = settled && !m.hovering ? 0 : requestAnimationFrame(tick)
   }, [])
 
-  const handleViewProject = (link: string) => {
-    window.open(link, "_blank")
+  useEffect(() => () => cancelAnimationFrame(motion.current.frame), [])
+
+  const onPointerMove = (e: PointerEvent) => {
+    if (e.pointerType !== "mouse") return
+    const m = motion.current
+    m.tx = e.clientX
+    m.ty = e.clientY
+    if (!m.hovering) {
+      m.hovering = true
+      m.x = m.tx
+      m.y = m.ty
+    }
+    if (!m.frame) m.frame = requestAnimationFrame(tick)
   }
 
-  const handleViewCode = (github: string) => {
-    window.open(github, "_blank")
+  const onPointerLeave = () => {
+    motion.current.hovering = false
+    setActive(null)
   }
 
   return (
-    <section id="projects" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">Featured Projects</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-            A selection of my recent work showcasing different technologies and problem-solving approaches
-          </p>
-        </div>
+    <section id="projects" className="relative py-28 md:py-40">
+      <div className="container-x">
+        <SectionHeading
+          index="03"
+          label="Selected work"
+          title="Things I've *built*."
+          aside={`${String(projects.length).padStart(2, "0")} projects`}
+        >
+          Production systems, hackathon builds and side projects — mostly backend, always end-to-end.
+        </SectionHeading>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {projects.map((project, index) => (
-            <Card
-              key={project.id}
-              className={`group overflow-hidden hover:shadow-lg transition-all duration-300 border-border hover:border-primary/50 ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-              }`}
-              style={{
-                transitionDelay: isVisible ? `${index * 100}ms` : "0ms",
-              }}
-            >
-              <div className="relative h-40 sm:h-48 overflow-hidden bg-muted">
-                <img
-                  src={project.image || "/placeholder.svg"}
-                  alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        <ul onPointerMove={onPointerMove} onPointerLeave={onPointerLeave} className="border-b border-line">
+          {projects.map((project, i) => {
+            const primary = project.link || project.github
+            return (
+              <Reveal
+                as="li"
+                key={project.title}
+                onPointerEnter={() => setActive(i)}
+                className="group relative border-t border-line"
+              >
+                <div className="grid grid-cols-12 items-start gap-x-6 gap-y-4 py-8 transition-[padding] duration-700 ease-expo md:items-center md:py-10 md:group-hover:pl-6">
+                  <img
+                    src={project.image || "/placeholder.svg"}
+                    alt=""
+                    loading="lazy"
+                    className="col-span-12 aspect-[16/10] w-full rounded-2xl border border-line object-cover md:hidden"
+                  />
+
+                  <span className="label col-span-2 pt-2 text-dim transition-colors duration-300 group-hover:text-signal md:col-span-1 md:pt-0">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+
+                  <h3 className="col-span-10 font-display text-[clamp(2rem,4.4vw,4rem)] leading-[0.95] font-semibold tracking-[-0.04em] transition-colors duration-500 group-hover:text-signal md:col-span-5">
+                    {primary ? (
+                      <a href={primary} target="_blank" rel="noreferrer" className="outline-none">
+                        {project.title}
+                        <span className="absolute inset-0 md:hidden" aria-hidden />
+                      </a>
+                    ) : (
+                      project.title
+                    )}
+                  </h3>
+
+                  <div className="col-span-10 col-start-3 md:col-span-3 md:col-start-auto">
+                    <p className="leading-relaxed text-mute">{project.description}</p>
+                    <p className="label mt-3 text-[10px] leading-relaxed text-dim">{project.tags.join(" · ")}</p>
+                  </div>
+
+                  <div className="relative col-span-10 col-start-3 flex gap-2 md:col-span-3 md:col-start-auto md:justify-end">
+                    {project.link && (
+                      <a href={project.link} target="_blank" rel="noreferrer" className={linkClass}>
+                        Live <ArrowUpRight className="size-3" />
+                      </a>
+                    )}
+                    {project.github && (
+                      <a href={project.github} target="_blank" rel="noreferrer" className={linkClass}>
+                        Code <ArrowUpRight className="size-3" />
+                      </a>
+                    )}
+                    {!primary && (
+                      <span className="label inline-flex items-center gap-1.5 rounded-full border border-line px-3.5 py-2 text-[10px] text-dim">
+                        <Lock className="size-3" /> Private
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <span
+                  aria-hidden
+                  className="absolute inset-x-0 -bottom-px h-px origin-left scale-x-0 bg-signal transition-transform duration-700 ease-expo group-hover:scale-x-100"
                 />
-              </div>
-              <div className="p-4 sm:p-6">
-                <h3 className="text-base sm:text-lg font-bold mb-2">{project.title}</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground mb-4">{project.description}</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {project.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-                <div className="flex gap-3 sm:gap-4">
-                  <button
-                    onClick={() => handleViewProject(project.link)}
-                    className="flex items-center gap-1 text-xs font-medium text-primary hover:text-accent transition-colors"
-                  >
-                    Visit <ExternalLink className="w-3 h-3" />
-                  </button>
-                  <button
-                    onClick={() => handleViewCode(project.github)}
-                    className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Code <GithubIcon className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-            </Card>
+              </Reveal>
+            )
+          })}
+        </ul>
+      </div>
+
+      {/* Floating preview — kept outside transformed ancestors so `fixed` stays viewport-relative. */}
+      <div ref={previewRef} aria-hidden className="pointer-events-none fixed top-0 left-0 z-30 hidden md:block">
+        <div
+          className={cn(
+            "relative aspect-[16/10] w-[26rem] overflow-hidden rounded-2xl border border-line-strong bg-ink-3 shadow-[0_40px_120px_-20px_rgb(0_0_0/0.8)] transition-[opacity,scale] duration-500 ease-expo",
+            active === null ? "scale-50 opacity-0" : "scale-100 opacity-100",
+          )}
+        >
+          {projects.map((project, i) => (
+            <img
+              key={project.title}
+              src={project.image || "/placeholder.svg"}
+              alt=""
+              className={cn(
+                "absolute inset-0 size-full object-cover transition-[opacity,scale] duration-700 ease-expo",
+                active === i ? "scale-100 opacity-100" : "scale-110 opacity-0",
+              )}
+            />
           ))}
+          <span className="label absolute bottom-3 left-3 rounded-full bg-ink/80 px-3 py-1.5 text-[10px] text-bone backdrop-blur">
+            {active !== null ? projects[active].title : ""}
+          </span>
         </div>
       </div>
     </section>

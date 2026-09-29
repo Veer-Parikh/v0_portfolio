@@ -1,34 +1,51 @@
 import type React from "react"
-import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import type { Metadata, Viewport } from "next"
+import { Bricolage_Grotesque, Instrument_Serif, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
+const display = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-bricolage",
+  axes: ["opsz", "wdth"],
+  display: "swap",
+})
+
+const serif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-instrument",
+  display: "swap",
+})
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
-  title: "Veer Parikh - Full Stack Developer",
+  title: "Veer Parikh — Backend & AI Engineer",
   description:
-    "Portfolio of Veer Parikh, a full-stack developer specializing in React, Next.js, and cloud technologies",
-  // generator: "v0.app",
+    "Veer Parikh is a backend-first engineer and Graduate Engineer Trainee in AI at MCX, Mumbai — building APIs, microservices, data systems and applied AI.",
+  openGraph: {
+    title: "Veer Parikh — Backend & AI Engineer",
+    description: "Graduate Engineer Trainee in AI at MCX. Backend-first: Node.js, microservices, data systems.",
+    type: "website",
+  },
   icons: {
     icon: [
-      {
-        url: "/icon.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.png",
-        type: "image/png",
-      },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon.png", type: "image/png" },
     ],
     apple: "/icon.png",
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: "#0c0c0b",
+  colorScheme: "dark",
 }
 
 export default function RootLayout({
@@ -37,9 +54,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`font-sans antialiased`}>
+    <html lang="en" className={`dark ${display.variable} ${serif.variable} ${mono.variable}`}>
+      <body className="font-sans antialiased">
+        <noscript>
+          <style>{`.reveal{opacity:1!important;transform:none!important;filter:none!important}`}</style>
+        </noscript>
         {children}
+        <div aria-hidden className="grain" />
         <Analytics />
       </body>
     </html>

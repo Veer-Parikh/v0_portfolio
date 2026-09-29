@@ -1,85 +1,45 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Card } from "@/components/ui/card"
-
-const leadership = [
-  {
-    id: 1,
-    title: "Deployments + Outhouse Head",
-    organization: "DJ Unicode",
-    description: "Led the deployments team and managed outhouse activities, ensuring smooth executions and technical support.",
-    image: "/mentor.jpg",
-  },
-  {
-    id: 2,
-    title: "Backend Mentee -> Mentor",
-    organization: "DJ Unicode",
-    description: "Started as a backend mentee and progressed to mentoring juniors in Node.js and Express.js for various projects.",
-    image: "/cocom.jpg",
-  },
-  {
-    id: 3,
-    title: "Backend Lead",
-    organization: "SVKM Schools Project",
-    description: "Mentoring and managing backend development for a live school management system for over 10000+ users.",
-    image: "/deployment.jpg",
-  },
-]
+import { community } from "@/lib/data"
+import { cn } from "@/lib/utils"
+import { Reveal } from "./reveal"
+import { SectionHeading } from "./section-heading"
 
 export default function Leadership() {
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-        }
-      },
-      { threshold: 0.1 },
-    )
-
-    const element = document.getElementById("leadership")
-    if (element) observer.observe(element)
-    return () => observer.disconnect()
-  }, [])
-
   return (
-    <section id="leadership" className="py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-9xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">Leadership and Extra-Curricular</h2>
-          <p className="text-muted-foreground">Contributing to the tech committees and helping others grow</p>
-        </div>
+    <section id="community" className="relative py-28 md:py-40">
+      <div className="container-x">
+        <SectionHeading index="05" label="Community" title="Leadership & *community*.">
+          Most of what I know, I learned by teaching it — or by shipping it alongside a team.
+        </SectionHeading>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-9xl mx-auto">
-          {leadership.map((item, index) => (
-            <Card
-              key={item.id}
-              className={`group relative overflow-hidden p-6 h-56 flex flex-col justify-end rounded-xl border border-border shadow-md cursor-pointer transition-all duration-500 ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-              }`}
-              style={{
-                transitionDelay: isVisible ? `${index * 100}ms` : "0ms",
-              }}
-            >
-              {/* Background Image */}
-              <div
-                className="absolute inset-0 bg-cover bg-center grayscale opacity-40 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500"
-                style={{ backgroundImage: `url(${item.image})` }}
-              />
-
-              {/* Dark Overlay */}
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition-all duration-500" />
-
-              {/* Text */}
-              <div className="relative z-10">
-                <h3 className="text-xl font-bold text-white drop-shadow mb-1">{item.title}</h3>
-                <p className="text-sm font-medium text-white/90 mb-2">{item.organization}</p>
-                <p className="text-sm text-white/80">{item.description}</p>
+        <div className="grid gap-x-6 gap-y-14 md:grid-cols-3">
+          {community.map((item, i) => (
+            <Reveal as="article" key={item.title} delay={i * 110} className={cn("group", i === 1 && "md:mt-24")}>
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[22px] border border-line bg-ink-3">
+                <img
+                  src={item.image}
+                  alt={`${item.title} — ${item.org}`}
+                  loading="lazy"
+                  className="size-full object-cover brightness-[0.8] contrast-[1.08] grayscale transition-[filter,scale] duration-1000 ease-expo group-hover:scale-[1.04] group-hover:brightness-100 group-hover:grayscale-0"
+                />
+                <div
+                  aria-hidden
+                  className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent transition-opacity duration-700 group-hover:opacity-60"
+                />
+                <span className="label absolute top-4 left-4 rounded-full bg-ink/70 px-3 py-1.5 text-[10px] text-bone backdrop-blur">
+                  {item.org}
+                </span>
+                <span className="label absolute right-5 bottom-5 left-5 flex items-center justify-between text-[10px] text-signal">
+                  <span>{item.period}</span>
+                  <span className="text-bone/60">0{i + 1} / 0{community.length}</span>
+                </span>
               </div>
-            </Card>
+              <h3 className="mt-6 font-display text-2xl font-semibold tracking-[-0.03em] md:text-[1.75rem]">
+                {item.title}
+              </h3>
+              <p className="mt-2 leading-relaxed text-mute">{item.description}</p>
+            </Reveal>
           ))}
         </div>
       </div>
