@@ -2,6 +2,8 @@
   "name": "my-v0-project",
   "version": "0.1.0",
   "private": true,
+  "description": "Portfolio of Veer Parikh, a backend-first engineer building with AI.",
+  "homepage": "https://veerparikh.dev",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
